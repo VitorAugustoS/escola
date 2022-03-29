@@ -23,24 +23,15 @@ class CursoController extends Controller
 		]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
+		$request->validate([
+			"nome" => "required|max:100"
+		], [
+			"nome.required" => "O campo nome é obrigatório.",
+			"nome.max" => "O campo nome aceita no máximo :max caracteres."
+		]);
+		
         if ($request->get("id") != ""){
 			$curso = Curso::Find($request->get("id"));
 		} else {
