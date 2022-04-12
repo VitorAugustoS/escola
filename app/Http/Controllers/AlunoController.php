@@ -5,14 +5,22 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Aluno;
 use App\Models\Curso;
+use Illuminate\Support\Facades\DB;
 
 class AlunoController extends Controller
 {
     
+	public function listaAlunos(){
+		return DB::table("aluno AS a")
+					->join("curso AS c", "a.curso_id", "=", "c.id")
+					->select("a.*", "c.nome AS nome_curso")
+					->get();
+	}
+	
     public function index()
     {
         $aluno = new Aluno();
-		$alunos = Aluno::All();
+		$alunos = $this->listaAlunos();
 		$cursos = Curso::All();
 		return view("aluno.index", [
 			"aluno" => $aluno,
@@ -40,27 +48,26 @@ class AlunoController extends Controller
 		return redirect("/aluno");
     }
 
-    
-    public function show($id)
-    {
-        //
-    }
 
     
     public function edit($id)
     {
-        //
+        $aluno = Aluno::Find($id);
+		$alunos = $this->listaAlunos();
+		$cursos = Curso::All();
+		return view("aluno.index", [
+			"aluno" => $aluno,
+			"alunos" => $alunos,
+			"cursos" => $cursos
+		]);
     }
 
-    
-    public function update(Request $request, $id)
-    {
-        //
-    }
 
     
-    public function destroy($id)
+    public function destroy($id, Request $request)
     {
-        //
+        Aluno::Destroy($id);
+		$request->session()->flash("status", "excluido");
+		return redirect("/aluno");
     }
 }

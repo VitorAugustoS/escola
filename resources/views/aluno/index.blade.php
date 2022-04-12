@@ -22,7 +22,7 @@
 			<select id="curso_id" name="curso_id" class="form-control" required>
 				<option value=""></option>
 				@foreach ($cursos as $curso)
-					<option value="{{ $curso->id }}">{{ $curso->nome }}</option>
+					<option value="{{ $curso->id }}" @if ($curso->id == $aluno->curso_id) selected @endif>{{ $curso->nome }}</option>
 				@endforeach
 			</select>
 		</div>
@@ -65,5 +65,46 @@
 				<th>Excluir</th>
 			</tr>
 		</thead>
+		<tbody>
+			@foreach ($alunos as $aluno)
+				<tr>
+					<td>{{ $aluno->nome }}</td>
+					<td>{{ $aluno->nome_curso }}</td>
+					<td></td>
+					<td>
+						<a href="/aluno/{{ $aluno->id }}/edit" class="btn btn-warning">
+							<i class="bi bi-pencil-square"></i> Editar
+						</a>
+					</td>
+					<td>
+						<form method="POST" action="/aluno/{{ $aluno->id }}">
+							@csrf
+							<input type="hidden" name="_method" value="DELETE" />
+							<button type="button" class="btn btn-danger" onclick="excluir(this);">
+								<i class="bi bi-trash"></i> Excluir
+							</button>
+						</form>
+					</td>
+				</tr>
+			@endforeach
+		</tbody>
 	</table>
 @endsection
+
+<script>
+	function excluir(btn) {
+		Swal.fire({
+			"title": "Deseja realmente excluir?",
+			"icon": "warning",
+			"showCancelButton": true,
+			"confirmButtonColor": "#3085d6",
+			"cancelButtonColor": "#d33",
+			"cancelButtonText": "Cancelar",
+			"confirmButtonText": "Confirmar"
+		}).then(function(result){
+			if (result.isConfirmed) {
+				$(btn).parents("form").submit();
+			}
+		});
+	}
+</script>
